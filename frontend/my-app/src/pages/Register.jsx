@@ -2,7 +2,11 @@ import { useState } from "react";
 import { registerUser } from "../api/authApi";
 
 const Register = () => {
-    const [form, setForm] = useState({name: "", email: "", password: ""});
+    const [form, setForm] = useState({
+        name: "",
+        email: "",
+        password: ""
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -12,16 +16,44 @@ const Register = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <input id="name" placeholder="name" onChange={e => setForm({...form, name: e.target.value})} />
-            <br/>
-            <br/>
-            <input id="email" placeholder="email" onChange={e => setForm({...form, email: e.target.value})} />
-            <br/>
-            <br/>
-            <input id="password" type="password" placeholder="password" onChange={e => setForm({...form, name: password.target.value})} />
-            <br/>
-            <br/>
-            <button>Register</button>
+            <input
+                name="name"
+                placeholder="Name"
+                value={form.name}
+                onChange={(e) =>
+                    setForm({ ...form, name: e.target.value })
+                }
+                required
+            />
+
+            <br /><br />
+
+            <input
+                name="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) =>
+                    setForm({ ...form, email: e.target.value })
+                }
+                required
+            />
+
+            <br /><br />
+
+            <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                }
+                required
+            />
+
+            <br /><br />
+
+            <button type="submit">Register</button>
         </form>
     );
 };
