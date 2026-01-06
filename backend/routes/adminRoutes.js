@@ -1,0 +1,15 @@
+import express from 'express';
+import { verifyToken, verifyAdmin } from '../middleware/authMiddleware.js';
+import {
+    getAllUsers,
+    updateUser,
+    deleteUser
+} from '../controllers/adminController.js';
+
+const router = express.Router();
+
+router.get("/users", verifyToken, verifyAdmin, getAllUsers);
+router.get("/users/:id", verifyToken, verifyAdmin, updateUser);
+router.get("/users/:id", verifyToken, verifyAdmin, deleteUser);
+
+export default router;

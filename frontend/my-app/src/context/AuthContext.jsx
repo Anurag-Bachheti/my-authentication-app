@@ -1,10 +1,13 @@
 // createContext = creates a global store
 // useState = stores auth data(user+token)
 import { createContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
+    const navigate = useNavigate();
+    
     const [user, setUser] = useState(
         JSON.parse(localStorage.getItem("user")) || null
     );

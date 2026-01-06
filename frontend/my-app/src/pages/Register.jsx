@@ -5,12 +5,13 @@ const Register = () => {
     const [form, setForm] = useState({
         name: "",
         email: "",
-        password: ""
+        password: "",
+        role: "user"
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        registerUser(form);
+        await registerUser(form);
         alert("Registed Successfully");
     }
 
@@ -52,6 +53,16 @@ const Register = () => {
             />
 
             <br /><br />
+
+            <select
+                value={form.role}
+                onChange={(e) => setForm({ ...form, role: e.target.value})}
+            >
+                <option value="user">User</option>
+                <option value="employee">Employee</option>
+            </select>
+
+            <br></br>
 
             <button type="submit">Register</button>
         </form>

@@ -5,8 +5,8 @@ function App() {
 
   return (
     <>
+      <h1>AdminDashboard</h1>
       <AppRoutes/>
-      <h1>Hello</h1>
     </>
   )
 }
