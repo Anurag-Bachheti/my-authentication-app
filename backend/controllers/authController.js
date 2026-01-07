@@ -29,8 +29,6 @@ export const register = async (req, res) => {
       role
     });
 
-    // await newUser.save();
-
     res.status(201).json({
       message: "Registered successfully",
       user: {
