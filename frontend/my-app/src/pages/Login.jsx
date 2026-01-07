@@ -1,24 +1,31 @@
 import { useContext, useState } from "react";
 import { loginUser } from "../api/authApi";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-
+    const navigate = useNavigate();
     const { login } = useContext(AuthContext);
     const [form, setForm] = useState({ email: "", password: "" });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Sending form data:", form);
-
         try {
             const res = await loginUser(form);
+            const {user, token} = res.data;
 
-            console.log("Login response:", res.data);
+            // store in context
+            login(user, token);
 
-            login(res.data);
-            console.log("Login Successful"); // works only if request succeeds
+            // role based redirect
+            if(user.role === "admin"){
+                navigate("/admin");
+            }else{
+                navigate("/dashboard");
+            }
+            
+            console.log("Login Successful");
         } catch (error) {
             console.error(
                 error.response?.data?.message || error.message || "Login Failed"

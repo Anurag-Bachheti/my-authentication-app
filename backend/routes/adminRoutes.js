@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 router.get("/users", verifyToken, verifyAdmin, getAllUsers);
-router.get("/users/:id", verifyToken, verifyAdmin, updateUser);
-router.get("/users/:id", verifyToken, verifyAdmin, deleteUser);
+router.put("/users/:id", verifyToken, verifyAdmin, updateUser);
+router.delete("/users/:id", verifyToken, verifyAdmin, deleteUser);
 
 export default router;

@@ -1,41 +1,60 @@
-import { Routes, Route } from 'react-router-dom';
-import AdminDashboard from '../pages/AdminDashboard';
-import ProtectedRoute from '../components/ProtectedRoute';
-import AdminRoutes from './AdminRoutes'
-import Login from '../pages/Login'
-import Register from '../pages/Register';
-import Profile from '../pages/Profile';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import AuthLanding from '../pages/AuthLanding'
+import UserDashboard from '../pages/UserDashboard'
+import AdminDashboard from '../pages/AdminDashboard';
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import ProtectedRoute from '../components/ProtectedRoute';
+import RoleProtectedRoute from '../components/RoleProtectedRoute';
 
 const AppRoutes = () => {
-    return (
-        <Routes>
-            <Route path="/" element={<AuthLanding />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+    const { token, user } = useContext(AuthContext);
 
-            {/* USER / EMPLOYEE */}
+    return (
+
+        <Routes>
+            {/* Public route */}
             <Route
-                path="/profile"
+                path="/"
                 element={
-                    <ProtectedRoute>
-                        <Profile />
-                    </ProtectedRoute>
+                    token ? (
+                        <Navigate
+                            to={user?.role === "admin" ? "/admin" : "/dashboard"}
+                        />
+                    ) : (
+                        <AuthLanding />
+                    )
                 }
             />
 
-            {/* ADMIN */}
+            {/* User / Employee */}
+            <Route
+                path="/dashboard"
+                element={
+                    token && (user?.role === "user" || user?.role === "employee") ? (
+                        <UserDashboard />
+                    ) : (
+                        <Navigate to="/" />
+                    )
+                }
+            />
+
+            {/* Admin */}
             <Route
                 path="/admin"
                 element={
-                    <AdminRoutes>
+                    token && user?.role === "admin" ? (
                         <AdminDashboard />
-                    </AdminRoutes>
+                    ) : (
+                        <Navigate to="/" />
+                    )
                 }
             />
 
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-    )
+    );
 }
 
 export default AppRoutes;

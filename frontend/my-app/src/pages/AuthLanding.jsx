@@ -1,12 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getDashboard } from "../api/authApi";
 import Register from "./Register";
 import Login from "./Login";
 
 const AuthLanding = () => {
 
-    const [message, setMessage] = useState("");
     const [showLogin, setShowLogin] = useState(true);
 
      return (

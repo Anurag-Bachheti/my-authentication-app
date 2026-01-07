@@ -3,22 +3,26 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
 const AdminDashboard = () => {
-    const { auth, logout } = useContext(AuthContext);
+    const { token, logout } = useContext(AuthContext);
     const [users, setUsers] = useState([]);
-
+    
     useEffect(()=> {
+
+        if (!token) return;
+
         axios.get("http://localhost:5000/api/admin/users", {
             headers: {
-                Authorization: `Bearer ${auth.token}`,
+                Authorization: `Bearer ${token}`,
             },
         })
-        .then((res) => setUsers(res.data));
-    }, []);
+        .then((res) => setUsers(res.data))
+        .catch((err) => console.error(err));
+    }, [token]);
 
     const deleteUser = async(id) => {
         await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
             headers: {
-                Authorization: `Bearer ${auth.token}`,
+                Authorization: `Bearer ${token}`,
             },
         });
         setUsers(users.filter((u)=> u._id !== id));
@@ -30,12 +34,12 @@ const AdminDashboard = () => {
             <button onClick={logout}>Logout</button>
 
             <ul>
-                {users.map((u)=> {
+                {users.map((u)=> (
                     <li key={u._id}>
                         {u.name} ({u.role})
                         <button onClick={()=> deleteUser(u._id)}>Delete</button>
                     </li>
-                })}
+                ))}
             </ul>
         </div>
     );

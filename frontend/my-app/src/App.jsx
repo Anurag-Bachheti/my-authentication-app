@@ -5,7 +5,6 @@ function App() {
 
   return (
     <>
-      <h1>AdminDashboard</h1>
       <AppRoutes/>
     </>
   )
