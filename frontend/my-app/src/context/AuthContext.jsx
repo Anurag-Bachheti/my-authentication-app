@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
+export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
-    
+
     const [user, setUser] = useState(
         JSON.parse(localStorage.getItem("user")) || null
     );
@@ -16,12 +16,29 @@ export const AuthProvider = ({children}) => {
         localStorage.getItem("token") || null
     );
 
-    const login = (userData, jwt) => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    const login = (userData, accessToken, refreshToken) => {
         setUser(userData);
-        setToken(jwt);
+        setToken(accessToken);
         localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", jwt);
+        localStorage.setItem("token", accessToken);
+
+        if (refreshToken) {
+            localStorage.setItem("refreshToken", refreshToken);
+        }
     };
+
+    const setAuthToken = (newToken) => {
+        setToken(newToken);
+        localStorage.setItem("token", newToken);
+    };
+
+    const getAuth = () => ({
+        user,
+        token,
+        refreshToken,
+    });
 
     const logout = () => {
         setUser(null);
@@ -30,9 +47,9 @@ export const AuthProvider = ({children}) => {
         navigate("/");
     };
 
-    return(
+    return (
         // makes them available globally
-        <AuthContext.Provider value={{user, token, login, logout}}>
+        <AuthContext.Provider value={{ user, token, refreshToken, setAuthToken, getAuth, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

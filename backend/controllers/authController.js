@@ -62,22 +62,101 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign(
+    // always issue access token
+    const accessToken = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "30s" }
     );
 
-    res.status(200).json({
-      token,
+    // ADMIN ONLY: issue refresh token
+    let refreshToken = null;
+
+    if (user.role === "admin") {
+      refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.REFRESH_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      user.refreshToken = refreshToken;
+      await user.save();
+    }
+
+    res.json({
+      accessToken,
+      refreshToken, // null for non-admins
       user: {
         id: user._id,
         name: user.name,
-        email: user.email,
         role: user.role
-      },
+      }
     });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body; // ✅ FIXED
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Refresh token required" });
+    }
+
+    const user = await User.findOne({ refreshToken });
+    if (!user) {
+      return res.status(403).json({ message: "Invalid refresh token" });
+    }
+
+    // 🔒 ADMIN CHECK
+    if (user.role !== "admin") {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+
+    const newAccessToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.json({ accessToken: newAccessToken });
+
+  } catch (err) {
+    res.status(403).json({ message: "Refresh token expired or invalid" });
+  }
+};
+
+
+export const logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(400).json({ message: "Refresh token required" });
+    }
+
+    const user = await User.findOne({ refreshToken });
+    if (!user) {
+      return res.json({ message: "Already logged out" });
+    }
+
+    if (user.role !== "admin") {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    user.refreshToken = null;
+    await user.save();
+
+    res.json({ message: "Logged out successfully" });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
