@@ -47,6 +47,7 @@ const Login = () => {
                 value={form.email}
                 onChange={e => setForm({ ...form, email: e.target.value })}
             />
+
             <input
                 name="password"
                 type="password"
@@ -57,9 +58,24 @@ const Login = () => {
                     setForm({ ...form, password: e.target.value })
                 }
             />
+
+            <br></br>
+            
             <button type="submit" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
             </button>
+
+            <br></br>
+            
+            <button
+                type="button"
+                onClick={() => {
+                    window.location.href = "http://localhost:5000/api/auth/google";
+                }}
+            >
+                Login with Google
+            </button>
+
         </form>
     );
 };

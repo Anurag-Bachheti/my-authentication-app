@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import {connectDB} from './db.js'
+import passport from "passport";
+import "./config/passport.js";
 
 dotenv.config();
 
@@ -20,6 +22,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(passport.initialize());
 
 // routes
 app.use('/api/auth', authRoutes);

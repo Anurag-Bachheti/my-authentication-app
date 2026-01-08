@@ -4,6 +4,7 @@ import UserDashboard from '../pages/UserDashboard'
 import AdminDashboard from '../pages/AdminDashboard';
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { OAuthSuccess } from '../context/OAthSuccess';
 import ProtectedRoute from '../components/ProtectedRoute';
 import RoleProtectedRoute from '../components/RoleProtectedRoute';
 
@@ -38,6 +39,8 @@ const AppRoutes = () => {
                     )
                 }
             />
+
+            <Route path="/oauth-success" element={<OAuthSuccess />} />
 
             {/* Admin */}
             <Route

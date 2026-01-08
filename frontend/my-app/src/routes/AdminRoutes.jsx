@@ -3,10 +3,10 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 const AdminRoutes = ({children}) => {
-    const {auth} = useContext(AuthContext);
+    const {token, user} = useContext(AuthContext);
 
-    if(!auth?.token) return <Navigate to="/login" />;
-    if(auth.user.role !== "admin") return <Navigate to="/profile" />
+    if(!token) return <Navigate to="/" />;
+    if(user?.role !== "admin") return <Navigate to="/" />
 
     return children;
 }

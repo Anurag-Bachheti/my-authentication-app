@@ -28,7 +28,7 @@ export const setupInterceptors = (getAuth, setAuthToken, logout) => {
       }
 
       if (error.response?.status === 401 && !originalRequest._retry) {
-
+        error.__handled = true;
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
@@ -72,8 +72,8 @@ export const setupInterceptors = (getAuth, setAuthToken, logout) => {
           isRefreshing = false;
         }
       }
-
-      return Promise.reject(error);
+      if (error.__handled) return Promise.resolve();
+      return Promise.reject(error); 
     }
   );
 };
