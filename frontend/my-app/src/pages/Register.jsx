@@ -9,10 +9,18 @@ const Register = () => {
         role: "user"
     });
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        await registerUser(form);
-        alert("Registed Successfully");
+        try {
+            await registerUser(form);
+            alert("Registration successful");
+        } catch (error) {
+            if (error.response?.status === 409) {
+                alert("User with this email already exists");
+            } else {
+                alert("User with this email already exists");
+            }
+        }
     }
 
     return (
@@ -56,7 +64,7 @@ const Register = () => {
 
             <select
                 value={form.role}
-                onChange={(e) => setForm({ ...form, role: e.target.value})}
+                onChange={(e) => setForm({ ...form, role: e.target.value })}
             >
                 <option value="user">User</option>
                 <option value="employee">Employee</option>

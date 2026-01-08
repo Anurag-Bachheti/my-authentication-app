@@ -1,31 +1,30 @@
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 const AdminDashboard = () => {
     const { token, logout } = useContext(AuthContext);
     const [users, setUsers] = useState([]);
-    
-    useEffect(()=> {
+
+    useEffect(() => {
 
         if (!token) return;
 
-        axios.get("http://localhost:5000/api/admin/users", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        .then((res) => setUsers(res.data))
-        .catch((err) => console.error(err));
+        api.get("/admin/users")
+            .then(res => setUsers(res.data))
+            .catch((err) => console.error(err));
     }, [token]);
 
-    const deleteUser = async(id) => {
-        await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        setUsers(users.filter((u)=> u._id !== id));
+    const deleteUser = async (id) => {
+        try {
+            await api.delete(`/admin/users/${id}`);
+
+            setUsers(prev =>
+                prev.filter((u) => u._id !== id)
+            );
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
     };
 
     return (
@@ -34,10 +33,10 @@ const AdminDashboard = () => {
             <button onClick={logout}>Logout</button>
 
             <ul>
-                {users.map((u)=> (
+                {users.map((u) => (
                     <li key={u._id}>
                         {u.name} ({u.role})
-                        <button onClick={()=> deleteUser(u._id)}>Delete</button>
+                        <button onClick={() => deleteUser(u._id)}>Delete</button>
                     </li>
                 ))}
             </ul>

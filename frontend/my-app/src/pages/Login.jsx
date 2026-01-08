@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { loginUser } from "../api/authApi";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate,  } from "react-router-dom";
+import { useNavigate, } from "react-router-dom";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -15,10 +15,10 @@ const Login = () => {
 
         try {
             const res = await loginUser(form);
-            const { user, accessToken } = res.data;
+            const { user, accessToken, refreshToken } = res.data;
 
             // only update state here
-            login(user, accessToken);
+            login(user, accessToken, refreshToken);
         } catch (error) {
             console.error(
                 error.response?.data?.message || error.message || "Login Failed"
@@ -57,7 +57,9 @@ const Login = () => {
                     setForm({ ...form, password: e.target.value })
                 }
             />
-            <button type="submit">Login</button>
+            <button type="submit" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+            </button>
         </form>
     );
 };

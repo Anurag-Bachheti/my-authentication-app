@@ -10,9 +10,10 @@ function App() {
    useEffect(() => {
     setupInterceptors(
       auth.getAuth,
-      auth.setAuthToken
+      auth.setAuthToken,
+      auth.logout
     );
-  }, []);
+  }, [auth]);
 
   return (
     <>

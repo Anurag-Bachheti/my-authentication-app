@@ -4,8 +4,10 @@ import User from "../models/User.js";
 
 // register
 export const register = async (req, res) => {
+
+  const { name, email, password, role } = req.body;
+  
   try {
-    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "All fields are required" });
@@ -17,7 +19,7 @@ export const register = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "User with this mail already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
