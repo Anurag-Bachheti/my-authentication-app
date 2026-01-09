@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
         if (refreshToken) {
             localStorage.setItem("refreshToken", refreshToken);
-        }else{
+        } else {
             localStorage.removeItem("refreshToken");
         }
     };
@@ -49,9 +49,14 @@ export const AuthProvider = ({ children }) => {
         navigate("/");
     };
 
+    const updateUser = (updatedUser) => {
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+    };
+
     return (
         // makes them available globally
-        <AuthContext.Provider value={{ user, token, refreshToken, setAuthToken, getAuth, login, logout }}>
+        <AuthContext.Provider value={{ user, token, refreshToken, setAuthToken, getAuth, login, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

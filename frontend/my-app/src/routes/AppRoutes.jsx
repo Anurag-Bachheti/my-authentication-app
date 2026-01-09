@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import AuthLanding from '../pages/AuthLanding'
 import UserDashboard from '../pages/UserDashboard'
 import AdminDashboard from '../pages/AdminDashboard';
+import Profile from '../pages/Profile';
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { OAuthSuccess } from '../context/OAthSuccess';
@@ -63,6 +64,10 @@ const AppRoutes = () => {
             {/* Reset Pass */}
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+            {/* Add more details */}
+            <Route path="/profile" element={<Profile />} />
+
         </Routes>
     );
 }

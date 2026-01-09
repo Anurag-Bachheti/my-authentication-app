@@ -8,6 +8,7 @@ const Register = () => {
         password: "",
         role: "user"
     });
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +25,7 @@ const Register = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="auth-form" onSubmit={handleSubmit}>
             <input
                 name="name"
                 placeholder="Name"
@@ -49,16 +50,25 @@ const Register = () => {
 
             <br /><br />
 
-            <input
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                }
-                required
-            />
+            <div className="password-field">
+                <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={form.password}
+                    onChange={(e) =>
+                        setForm({ ...form, password: e.target.value })
+                    }
+                    required
+                />
+                <button
+                    type="button"
+                    className="eye-btn"
+                    onClick={() => setShowPassword(p => !p)}
+                >
+                    {showPassword ? "🙈" : "👁️"}
+                </button>
+            </div>
 
             <br /><br />
 
@@ -72,7 +82,7 @@ const Register = () => {
 
             <br></br>
 
-            <button type="submit">Register</button>
+            <button className="btn-primary" type="submit">Register</button>
         </form>
     );
 };

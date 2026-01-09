@@ -71,7 +71,7 @@ export const login = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "30s" }
+      { expiresIn: "15m" }
     );
 
     // ADMIN ONLY: issue refresh token
