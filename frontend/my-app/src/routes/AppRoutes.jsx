@@ -5,6 +5,8 @@ import AdminDashboard from '../pages/AdminDashboard';
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { OAuthSuccess } from '../context/OAthSuccess';
+import { ForgotPassword } from '../pages/ForgotPassword';
+import { ResetPassword } from '../pages/ResetPassword';
 import ProtectedRoute from '../components/ProtectedRoute';
 import RoleProtectedRoute from '../components/RoleProtectedRoute';
 
@@ -40,8 +42,6 @@ const AppRoutes = () => {
                 }
             />
 
-            <Route path="/oauth-success" element={<OAuthSuccess />} />
-
             {/* Admin */}
             <Route
                 path="/admin"
@@ -56,6 +56,13 @@ const AppRoutes = () => {
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" />} />
+
+            {/* OAth Google*/}
+            <Route path="/oauth-success" element={<OAuthSuccess />} />
+            
+            {/* Reset Pass */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
     );
 }

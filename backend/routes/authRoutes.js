@@ -7,6 +7,11 @@ import {
     refreshAccessToken,
     logout
 } from "../controllers/authController.js";
+import {
+  forgotPassword,
+  resetPassword,
+} from "../controllers/authController.js";
+
 
 const router = express.Router();
 
@@ -21,6 +26,9 @@ router.get(
         prompt: "select_account",
     })
 );
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
+
 router.get(
     "/google/callback",
     passport.authenticate("google", { session: false }),
