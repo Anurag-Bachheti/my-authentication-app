@@ -15,11 +15,29 @@ const Register = () => {
         try {
             await registerUser(form);
             alert("Registration successful");
+
+            setForm({
+                name: "",
+                email: "",
+                password: "",
+                role: ""
+            })
+
         } catch (error) {
-            if (error.response?.status === 409) {
-                alert("User with this email already exists");
+
+            const status = error.response?.status;
+            const message = error.response?.data?.message;
+
+            if (status === 409 || message?.toLowerCase().includes("exists")) {
+                alert("User or Member with this email already exists");
+
+                setForm(prev => ({
+                    ...prev,
+                    email: ""
+                }));
+
             } else {
-                alert("User with this email already exists");
+                alert("Something went wrong");
             }
         }
     }
