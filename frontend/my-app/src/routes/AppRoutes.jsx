@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import AuthLanding from '../pages/AuthLanding'
 import UserDashboard from '../pages/UserDashboard'
 import AdminDashboard from '../pages/AdminDashboard';
-import Profile from '../pages/Profile';
+import EditProfile from '../pages/EditProfile';
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { OAuthSuccess } from '../context/OAthSuccess';
@@ -66,7 +66,7 @@ const AppRoutes = () => {
             <Route path="/reset-password/:token" element={<ResetPassword />} />
 
             {/* Add more details */}
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<EditProfile />} />
 
         </Routes>
     );

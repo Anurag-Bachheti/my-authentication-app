@@ -20,11 +20,19 @@ const UserDashboard = () => {
             <h1>USER DASHBOARD</h1>
             <h1>Welcome, {user.name} 👋</h1>
 
-            {/* <div style={{ marginTop: "20px" }}>
-                <p><strong>Name:</strong> {user.name}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Role:</strong> {user.role}</p>
-            </div> */}
+            {user.photo && (
+                <img
+                    src={`http://localhost:5000${user.photo}`}
+                    alt="profile"
+                    style={{
+                        width: "150px",
+                        height: "150px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        marginBottom: "15px",
+                    }}
+                />
+            )}
 
             {user.email && (
                 <p><strong>Email:</strong>{user.email}</p>
@@ -38,15 +46,13 @@ const UserDashboard = () => {
                 <p><strong>Address:</strong>{user.address}</p>
             )}
 
-            {user.photo && (
-                <img
-                    src={user.photo}
-                    alt="profile"
-                    width="120"
-                    style={{ borderRadius: "50%" }}
-                />
-            )}
+            <button onClick={() => navigate("/profile")}>
+                Complete Your Profile
+            </button>
 
+            <br/>
+            <br/>
+            
             <button
                 style={{ marginTop: "20px" }}
                 onClick={handleLogout}
@@ -54,9 +60,7 @@ const UserDashboard = () => {
                 Logout
             </button>
 
-            <button onClick={() => navigate("/profile")}>
-                Complete Your Profile
-            </button>
+
         </div>
     );
 };

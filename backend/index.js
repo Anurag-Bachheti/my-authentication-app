@@ -30,6 +30,7 @@ app.use(passport.initialize());
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
+app.use("/uploads", express.static("uploads"));
 
 // test route
 app.get('/', (req,res)=> {
