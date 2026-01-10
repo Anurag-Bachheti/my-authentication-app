@@ -2,6 +2,7 @@ import api from "./axios";
 
 let isRefreshing = false;
 let failedQueue = [];
+let hasLoggedOut = false;
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach(prom => {
@@ -15,20 +16,28 @@ export const setupInterceptors = (getAuth, setAuthToken, logout) => {
   api.interceptors.response.use(
     response => response,
     async error => {
-
-      // 🔐 SAFETY CHECK (THIS FIXES YOUR CRASH)
       const originalRequest = error?.config;
       if (!originalRequest) {
         return Promise.reject(error);
       }
 
-      // ❌ do NOT intercept refresh endpoint itself
+      // 🚫 Never intercept refresh endpoint
       if (originalRequest.url?.includes("/auth/refresh")) {
         return Promise.reject(error);
       }
 
       if (error.response?.status === 401 && !originalRequest._retry) {
-        error.__handled = true;
+
+        // If already logged out, do nothing
+        if (hasLoggedOut) {
+          return Promise.reject(error);
+        }
+
+        if (hasExpired) {
+          return Promise.reject(error);
+        }
+
+        // If refresh already in progress, queue request
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
@@ -44,12 +53,10 @@ export const setupInterceptors = (getAuth, setAuthToken, logout) => {
         try {
           const refreshToken = localStorage.getItem("refreshToken");
           if (!refreshToken) {
-            logout();
-            return Promise.reject(error);
+            throw new Error("No refresh token");
           }
 
           const res = await api.post("/auth/refresh", { refreshToken });
-
           const newAccessToken = res.data.accessToken;
 
           // store token
@@ -66,14 +73,22 @@ export const setupInterceptors = (getAuth, setAuthToken, logout) => {
 
         } catch (refreshErr) {
           processQueue(refreshErr, null);
-          logout();
+
+          if (!hasLoggedOut) {
+            hasLoggedOut = true;
+            setSessionExpired(true);
+            alert("Session expired. Please login again to continue.");
+            navigate("/dashboard");
+          }
+
           return Promise.reject(refreshErr);
+
         } finally {
           isRefreshing = false;
         }
       }
-      if (error.__handled) return Promise.resolve();
-      return Promise.reject(error); 
+
+      return Promise.reject(error);
     }
   );
 };

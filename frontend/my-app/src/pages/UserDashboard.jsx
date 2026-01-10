@@ -1,10 +1,24 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 const UserDashboard = () => {
-    const { user, logout } = useContext(AuthContext);
+    const { user, logout, updateUser } = useContext(AuthContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await api.get("/user/profile");
+                updateUser(res.data); // 🔥 refresh context with latest data
+            } catch (err) {
+                console.error("Failed to fetch profile");
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -50,9 +64,9 @@ const UserDashboard = () => {
                 Complete Your Profile
             </button>
 
-            <br/>
-            <br/>
-            
+            <br />
+            <br />
+
             <button
                 style={{ marginTop: "20px" }}
                 onClick={handleLogout}
