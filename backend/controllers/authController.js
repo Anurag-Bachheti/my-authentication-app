@@ -12,9 +12,9 @@ export const register = async (req, res) => {
   
   try {
 
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
+    // if (!name || !email || !password || !role) {
+    //   return res.status(400).json({ message: "All fields are required" });
+    // }
 
     if (role === "admin") {
       return res.status(403).json({ message: "Admin cannot be created" });
@@ -53,9 +53,9 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password required" });
-    }
+    // if (!email || !password) {
+    //   return res.status(400).json({ message: "Email and password required" });
+    // }
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -71,7 +71,7 @@ export const login = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "5s" }
     );
 
     // ADMIN ONLY: issue refresh token

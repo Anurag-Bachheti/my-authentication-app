@@ -33,9 +33,9 @@ export const setupInterceptors = (getAuth, setAuthToken, logout) => {
           return Promise.reject(error);
         }
 
-        if (hasExpired) {
-          return Promise.reject(error);
-        }
+        // if (hasExpired) {
+        //   return Promise.reject(error);
+        // }
 
         // If refresh already in progress, queue request
         if (isRefreshing) {

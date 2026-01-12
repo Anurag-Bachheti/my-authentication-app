@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 const AdminDashboard = () => {
     const { token, logout } = useContext(AuthContext);
     const [users, setUsers] = useState([]);
+    const [errors, setErrors] = useState({});
 
     // ✅ Used for BOTH create and edit
     const [newUser, setNewUser] = useState({
@@ -25,6 +26,8 @@ const AdminDashboard = () => {
 
     // ✅ CREATE or UPDATE user
     const handleSubmit = async () => {
+        setErrors({});
+
         try {
             if (editingUserId) {
                 // ✏️ EDIT USER
@@ -50,6 +53,20 @@ const AdminDashboard = () => {
             setEditingUserId(null);
 
         } catch (err) {
+            const status = err.response?.status;
+            const data = err.response?.data;
+
+            //joi validation
+            if (status === 400 && data?.errors) {
+                setErrors(data.errors);   // 👈 DIRECTLY set field errors
+                return;                   // ⛔ STOP here → no alert
+            }
+
+            if (status === 409) {
+                setErrors({ email: "User already exists" });
+                return;
+            }
+            console.error(err);
             alert("Operation failed");
         }
     };
@@ -66,7 +83,7 @@ const AdminDashboard = () => {
     return (
         <div>
             <h2>Admin Dashboard</h2>
-            <button onClick={()=> logout()}>Logout</button>
+            <button onClick={() => logout()}>Logout</button>
 
             {/* 🔥 REUSED FORM */}
             <h3>{editingUserId ? "Edit User" : "Create User"}</h3>
@@ -78,6 +95,7 @@ const AdminDashboard = () => {
                     setNewUser({ ...newUser, name: e.target.value })
                 }
             />
+            {errors.name && <p className="error">{errors.name}</p>}
 
             <input
                 placeholder="Email"
@@ -87,6 +105,7 @@ const AdminDashboard = () => {
                     setNewUser({ ...newUser, email: e.target.value })
                 }
             />
+            {errors.email && <p className="error">{errors.email}</p>}
 
             <select
                 value={newUser.role}
@@ -97,6 +116,7 @@ const AdminDashboard = () => {
                 <option value="user">User</option>
                 <option value="employee">Employee</option>
             </select>
+            {errors.role && <p className="error">{errors.role}</p>}
 
             <button onClick={handleSubmit}>
                 {editingUserId ? "Save" : "Create"}

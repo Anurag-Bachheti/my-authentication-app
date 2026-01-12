@@ -9,14 +9,10 @@ export const getAllUsers = async(req,res) => {
 export const createUser = async(req,res) => {
     const { name, email, role, password } = req.body;
 
-    if (!name || !email) {
-        return res.status(400).json({ message: "Name and email required" });
-    }
-
     //prevent dublicate
     const exists = await User.findOne({ email });
     if (exists) {
-        return res.status(400).json({ message: "User already exists" });
+        return res.status(409).json({ message: "User already exists" });
     }
 
     const hashedPassword = password

@@ -11,12 +11,16 @@ import {
   forgotPassword,
   resetPassword,
 } from "../controllers/authController.js";
+import { validate } from "../middleware/validate.js";
 
+// joi validation
+import { signupSchema } from "../validations/user.validation.js";
+import { loginSchema } from "../validations/auth.validation.js";
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", validate(signupSchema), register);
+router.post("/login", validate(loginSchema), login);
 router.post("/refresh", refreshAccessToken);
 router.post("/logout", logout);
 router.get(

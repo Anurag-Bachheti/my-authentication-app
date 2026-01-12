@@ -10,9 +10,13 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    // joi
+    const [errors, setErrors] = useState({});
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setErrors({});
 
         try {
             const res = await loginUser(form);
@@ -21,9 +25,24 @@ const Login = () => {
             // only update state here
             login(user, accessToken, refreshToken);
         } catch (error) {
-            console.error(
-                error.response?.data?.message || error.message || "Login Failed"
-            );
+
+            const status = error.response?.status;
+            const backendErrors = error.response?.data?.errors;
+            const message = error.response?.data?.message;
+
+            //joi validation
+            if (status === 400 && backendErrors) {
+                setErrors(backendErrors);
+                return;
+            }
+
+            // invalid credentials
+            if (status === 400 && message === "Invalid credentials") {
+                alert("Invalid email or password");
+                return;
+            }
+
+            alert("Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -48,6 +67,7 @@ const Login = () => {
                 value={form.email}
                 onChange={e => setForm({ ...form, email: e.target.value })}
             />
+            {errors.email && <p className="error">{errors.email}</p>}
 
             <div className="password-field">
                 <input
@@ -69,6 +89,7 @@ const Login = () => {
                     {showPassword ? "🙈" : "👁️"}
                 </button>
             </div>
+            {errors.password && <p className="error">{errors.password}</p>}
 
             <button className="btn-primary" type="submit" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
