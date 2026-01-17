@@ -3,7 +3,7 @@ import api from "../api/axios";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { DisabledOnExpire } from "./DisabledOnExpire";
+// import { DisabledOnExpire } from "./DisabledOnExpire";
 
 export const EditProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -30,10 +30,15 @@ export const EditProfile = () => {
   }, [sessionExpired]);
 
   const saveProfile = async () => {
+    // if (!sessionExpired) {
+    //   // alert("Your session has expired. Please login again.");
+    //   navigate("/dashboard");
+    //   return;
+    // }
+
     try {
       let updatedProfile = profile;
 
-      // 1️⃣ Upload photo if selected
       if (photoFile) {
         const formData = new FormData();
         formData.append("photo", photoFile);
@@ -47,7 +52,7 @@ export const EditProfile = () => {
         updatedProfile = photoRes.data;
       }
 
-      // 2️⃣ Update text fields
+      // update profile details
       const res = await api.put("/user/profile", {
         name: updatedProfile.name,
         phone: updatedProfile.phone,
@@ -59,16 +64,23 @@ export const EditProfile = () => {
       setEditing(false);
 
     } catch (err) {
-      // if (err.response?.status === 401) {
-      //   alert("Session expired. Please login again.");
-      //   logout();
-      // } else {
-      //   alert("Failed to update profile");
-      // }
-      console.error("Failed to update profile")
+      // console.error("Failed to update profile");
+      if (err.response?.status === 401) {
+        alert("Your session has expired. Please login again.");
+        setEditing(false);
+        navigate("/dashboard");
+        return;
+      }
+      alert("Failed to update profile");
+      console.error("Failed to update profile", err);
     }
   };
 
+  useEffect(() => {
+    if (sessionExpired) {
+      setEditing(false);
+    }
+  }, [sessionExpired]);
 
   if (!profile && !sessionExpired) return <p>Loading...</p>;
 
@@ -108,63 +120,75 @@ export const EditProfile = () => {
       )}
 
       {/* FILE UPLOAD */}
-      <DisabledOnExpire>
-        <input
-          type="file"
-          accept="image/*"
-          disabled={!editing}
-          onChange={(e) => setPhotoFile(e.target.files[0])}
-        />
-        <br />
-        <br />
-        {/* NAME */}
-        <label>Name: </label>
-        <input
-          value={profile.name}
-          disabled={!editing}
-          maxLength={20}
-          onChange={e => setProfile({ ...profile, name: e.target.value })}
-        />
-        <br />
-        <br />
+      {/* <DisabledOnExpire> */}
+      <input
+        type="file"
+        accept="image/*"
+        disabled={!editing}
+        onChange={(e) => setPhotoFile(e.target.files[0])}
+      />
+      <br />
+      <br />
+      {/* NAME */}
+      <label>Name: </label>
+      <input
+        value={profile.name}
+        disabled={!editing}
+        maxLength={20}
+        onChange={e => setProfile({ ...profile, name: e.target.value })}
+      />
+      <br />
+      <br />
 
-        {/* EMAIL (READ ONLY) */}
-        <label>Email: </label>
-        <input value={profile.email} disabled />
+      {/* EMAIL (READ ONLY) */}
+      <label>Email: </label>
+      <input value={profile.email} disabled />
 
-        <br />
-        <br />
-        {/* PHONE */}
-        <label>Phone: </label>
-        <input
-          placeholder="Phone number"
-          value={profile.phone || ""}
-          disabled={!editing}
-          maxLength={10}
-          onChange={e => setProfile({ ...profile, phone: e.target.value })}
-        />
+      <br />
+      <br />
+      {/* PHONE */}
+      <label>Phone: </label>
+      <input
+        placeholder="Phone number"
+        value={profile.phone || ""}
+        disabled={!editing}
+        maxLength={10}
+        onChange={e => setProfile({ ...profile, phone: e.target.value })}
+      />
 
-        <br />
-        <br />
-        {/* ADDRESS */}
-        <label>Address: </label>
-        <textarea
-          placeholder="Address"
-          value={profile.address || ""}
-          disabled={!editing}
-          maxLength={100}
-          onChange={e => setProfile({ ...profile, address: e.target.value })}
-        />
+      <br />
+      <br />
 
-        <br />
-        <br />
+      {/* ADDRESS */}
+      <label>Address: </label>
+      <textarea
+        placeholder="Address"
+        value={profile.address || ""}
+        disabled={!editing}
+        maxLength={100}
+        onChange={e => setProfile({ ...profile, address: e.target.value })}
+      />
 
-        {!editing ? (
-          <button onClick={() => setEditing(true)} style={{ backgroundColor: "blue", color: "white" }}>Edit Fields</button>
-        ) : (
-          <button onClick={saveProfile}>Save</button>
-        )}
-      </DisabledOnExpire>
+      <br />
+      <br />
+
+      {!editing ? (
+        // <button onClick={() => setEditing(true)} style={{ backgroundColor: "blue", color: "white" }}>Edit Fields</button>
+        <button
+          // disabled={!sessionExpired}
+          onClick={() => setEditing(true)}
+          style={{
+            backgroundColor: sessionExpired ? "gray" : "blue",
+            color: "white",
+            cursor: sessionExpired ? "not-allowed" : "pointer"
+          }}
+        >
+          Edit Fields
+        </button>
+      ) : (
+        <button onClick={saveProfile}>Save</button>
+      )}
+      {/* </DisabledOnExpire> */}
 
       <br />
       <br />

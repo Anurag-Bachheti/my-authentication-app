@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
 
     // ✅ Attach interceptors ONCE
     useEffect(() => {
-        setupInterceptors(setSessionExpired, setToken);
+        setupInterceptors(getAuth, logout, setSessionExpired, setToken, setAuthToken);
     }, []);
 
     // ✅ ONLY show alert — NO navigation here

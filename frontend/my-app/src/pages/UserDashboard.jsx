@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 const UserDashboard = () => {
-    const { user, logout, updateUser } = useContext(AuthContext);
+    const { user, logout, updateUser, sessionExpired } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -60,7 +60,30 @@ const UserDashboard = () => {
                 <p><strong>Address:</strong>{user.address}</p>
             )}
 
-            <button onClick={() => navigate("/profile")}>
+             {/* Globally not working */}
+            {/* <button
+                onClick={() => {
+                    debugger
+                    if (sessionExpired === true) {
+                        alert("Session expired. Please login again to continue.");
+                        return;
+                    }
+                    navigate("/profile");
+                }}
+            > */}
+            
+            <button
+                onClick={async () => {
+                    try {
+                        await api.get("/user/profile"); // token check
+                        navigate("/profile");
+                    } catch (err) {
+                        if (err.response?.status === 401) {
+                            alert("Session expired. Please login again to continue.");
+                        }
+                    }
+                }}
+            >
                 Complete Your Profile
             </button>
 
@@ -73,8 +96,6 @@ const UserDashboard = () => {
             >
                 Logout
             </button>
-
-
         </div>
     );
 };

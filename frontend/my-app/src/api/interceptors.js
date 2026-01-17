@@ -12,7 +12,7 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-export const setupInterceptors = (getAuth, setAuthToken, logout) => {
+export const setupInterceptors = (getAuth, setAuthToken, logout, setSessionExpired) => {
   api.interceptors.response.use(
     response => response,
     async error => {
@@ -77,8 +77,6 @@ export const setupInterceptors = (getAuth, setAuthToken, logout) => {
           if (!hasLoggedOut) {
             hasLoggedOut = true;
             setSessionExpired(true);
-            alert("Session expired. Please login again to continue.");
-            navigate("/dashboard");
           }
 
           return Promise.reject(refreshErr);
