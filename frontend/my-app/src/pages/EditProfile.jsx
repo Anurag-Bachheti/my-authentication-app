@@ -19,6 +19,7 @@ export const EditProfile = () => {
 
     const fetchProfile = async () => {
       try {
+        await new Promise(res => setTimeout(res, 1000));
         const res = await api.get("/user/profile");
         setProfile(res.data);
       } catch (err) {
