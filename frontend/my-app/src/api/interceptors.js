@@ -1,4 +1,6 @@
 import api from "./axios";
+import store from "../store";
+import { setSessionExpired } from "../store/authSlice";
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -12,7 +14,7 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-export const setupInterceptors = (getAuth, setAuthToken, logout, setSessionExpired) => {
+export const setupInterceptors = (getAuth, setAuthToken, logout) => {
   api.interceptors.response.use(
     response => response,
     async error => {
@@ -32,10 +34,6 @@ export const setupInterceptors = (getAuth, setAuthToken, logout, setSessionExpir
         if (hasLoggedOut) {
           return Promise.reject(error);
         }
-
-        // if (hasExpired) {
-        //   return Promise.reject(error);
-        // }
 
         // If refresh already in progress, queue request
         if (isRefreshing) {
@@ -76,7 +74,7 @@ export const setupInterceptors = (getAuth, setAuthToken, logout, setSessionExpir
 
           if (!hasLoggedOut) {
             hasLoggedOut = true;
-            setSessionExpired(true);
+            store.dispatch(setSessionExpired(true));
           }
 
           return Promise.reject(refreshErr);

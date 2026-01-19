@@ -1,10 +1,8 @@
-// createContext = creates a global store
-// useState = stores auth data(user+token)
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setupInterceptors } from "../api/interceptors";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
@@ -16,8 +14,6 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(
         localStorage.getItem("token") || null
     );
-
-    const [sessionExpired, setSessionExpired] = useState(false);
 
     const refreshToken = localStorage.getItem("refreshToken");
 
@@ -56,31 +52,21 @@ export const AuthProvider = ({ children }) => {
         if (message) alert(message);
         setUser(null);
         setToken(null);
-        setSessionExpired(false);
         localStorage.clear();
         navigate("/");
     };
 
     // ✅ Attach interceptors ONCE
     useEffect(() => {
-        setupInterceptors(getAuth, logout, setSessionExpired, setToken, setAuthToken);
+        setupInterceptors(getAuth, logout, setToken, setAuthToken);
     }, []);
-
-    // ✅ ONLY show alert — NO navigation here
-    useEffect(() => {
-        if (sessionExpired) {
-            alert("Session expired. Please login again to continue.");
-        }
-    }, [sessionExpired]);
-
+    
     return (
         <AuthContext.Provider
             value={{
                 user,
                 token,
                 refreshToken,
-                sessionExpired,
-                setSessionExpired,
                 setAuthToken,
                 getAuth,
                 login,
@@ -91,4 +77,8 @@ export const AuthProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     );
+};
+
+export const useAuth = () => {
+  return useContext(AuthContext);
 };
